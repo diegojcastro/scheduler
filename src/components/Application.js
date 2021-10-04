@@ -18,20 +18,65 @@ export default function Application(props) {
     interviewers: null
   });
   
+  function bookInterview(id, interview) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+    const newState = {
+      ...state,
+      appointments
+    };
+
+    setState(newState);
+    // console.log(id, interview);
+
+    return axios.put(`/api/appointments/${id}`, {...appointment})
+      .then(() => setState(newState))
+  };
+
+  function cancelInterview(id) {
+    const appointment = {
+      ...state.appointments[id]
+    }
+    appointment.interview = null;
+
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
+    const newState = {
+      ...state,
+      appointments
+    }
+
+    return axios.delete(`/api/appointments/${id}`)
+      .then( () => setState(newState))
+  }
+
+
   const dailyAppointments = getAppointmentsForDay(state, state.day);
   const parsedAppointments = dailyAppointments.map( appointment => {
-  const interviewers = getInterviewersForDay(state, state.day);
+    const interviewers = getInterviewersForDay(state, state.day);
 
-  const interview = getInterview(state, appointment.interview);
+    const interview = getInterview(state, appointment.interview);
 
-  return (
-    <Appointment 
-      key={appointment.id}
-      {...appointment}
-      interview={interview}
-      interviewers={interviewers}
-      />
-    );
+
+    return (
+      <Appointment 
+        key={appointment.id}
+        {...appointment}
+        interview={interview}
+        interviewers={interviewers}
+        bookInterview={bookInterview}
+        cancelInterview={cancelInterview}
+        />
+      );
   });
   parsedAppointments.push(<Appointment key="last" time="5pm" />)
   
