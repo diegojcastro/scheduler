@@ -6,6 +6,7 @@ import Empty from './Empty';
 import Form from './Form';
 import Status from './Status';
 import Confirm from './Confirm';
+import Error from './Error';
 
 import useVisualMode from "hooks/useVisualMode";
 
@@ -21,8 +22,9 @@ function Appointment(props) {
   const SAVING = "SAVING";
   const DELETING = "DELETING";
   const CONFIRM = "CONFIRM";
-
-  const fullInterview = {...props.interview}
+  const EDIT = "EDIT";
+  const ERROR_DELETE = "ERROR_DELETE";
+  const ERROR_SAVE = "ERROR_SAVE";
 
   const {mode, transition, back} = useVisualMode( props.interview ? SHOW : EMPTY);
 
@@ -31,25 +33,30 @@ function Appointment(props) {
       student: name,
       interviewer
     };
-
-    transition(SAVING);
+    transition(SAVING); // Flagging this true changes nothing?
     props.bookInterview(props.id, interview)
-      .then(() => transition(SHOW));
-  }
+      .then(() => transition(SHOW))
+      .catch((e) => {
+        transition(ERROR_SAVE, true);
+      });
+  };
 
   function confirmDeletion() {
     transition(CONFIRM);
-  }
+  };
 
   function deleteInterview() {
-    
-    // Confim dialog will go here
-
-    transition(DELETING);
+    transition(DELETING, true); // For some reason flagging this true doesn't change anything.
     props.cancelInterview(props.id)
-      .then(() => transition(EMPTY));
-
-  }
+      .then(() => transition(EMPTY))
+      .catch((e) => {
+        transition(ERROR_DELETE, true);
+      });
+  };
+  
+  function editInterview() {
+    transition(EDIT);
+  };
 
   return(
     <article className="appointment">
@@ -60,6 +67,7 @@ function Appointment(props) {
           student={props.interview.student}
           interviewer={props.interview.interviewer}
           onDelete={confirmDeletion}
+          onEdit={editInterview}
         />
       )}
       {mode === CREATE && (
@@ -78,6 +86,27 @@ function Appointment(props) {
         />
       )}
       {mode === DELETING && <Status message="Deleting."/>}
+      {mode === EDIT && (
+        <Form 
+          interviewers={props.interviewers}
+          value={props.interview.interviewer.id}
+          name={props.interview.student}
+          onCancel={back}
+          onSave={save}
+        />
+      )}
+      {mode === ERROR_DELETE && (
+        <Error
+          message="Request failed on Delete operation."
+          onClose={back}
+        />
+      )}
+      {mode === ERROR_SAVE && (
+        <Error
+          message="Request failed on Save operation."
+          onClose={back}
+        />
+      )}
     </article>
   );
 };
