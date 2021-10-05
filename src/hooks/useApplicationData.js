@@ -18,23 +18,14 @@ export default function useApplicationData() {
       ...state.appointments[id],
       interview: { ...interview }
     };
-    // console.log('When I create appointment from ...state.appointments[id] it looks like this:', appointment);
     const appointments = {
       ...state.appointments,
       [id]: appointment
     };
-    // console.log('After creating a new appointments, this is my state obj:', state);
-    // console.log('And I created this new appointments object:', appointments)
-
     const newState = {
       ...state,
       appointments
     };
-    // console.log('This is the old state', state);
-    console.log('This is newState, right before setting it and calling updateSpots', newState);
-
-    // setState(newState);
-    // console.log(id, interview);
 
     return axios.put(`/api/appointments/${id}`, { ...appointment })
       .then(() => updateSpots(newState))
