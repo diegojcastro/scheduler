@@ -37,9 +37,7 @@ export default function useApplicationData() {
     // console.log(id, interview);
 
     return axios.put(`/api/appointments/${id}`, { ...appointment })
-      .then(() => setState(newState))
-      .then(() => updateSpots(id, true))
-      .catch(e => console.log(e))
+      .then(() => updateSpots(newState))
   };
 
   function cancelInterview(id) {
@@ -59,8 +57,7 @@ export default function useApplicationData() {
     }
 
     return axios.delete(`/api/appointments/${id}`)
-      .then(() => setState(newState))
-      .then(() => updateSpots(id, false))
+      .then(() => updateSpots(newState))
   }
 
   useEffect(() => {
@@ -78,55 +75,31 @@ export default function useApplicationData() {
     })
   }, [])
 
-  const updateSpots = (id, adding) => {
 
-    // setState({
-    //   ...state,
-    //   days: [...state.days, state.days[id]]
-    // })
-
-    
-    // Old attempt
-    console.log('From updateSpots, this is what state looked like:', state); // This state is stale!
-    const todayString = state.day;
-    const todayObject = state.days.find( d => d.name === todayString);
-    const todayObjIndex = state.days.findIndex( d => d.name === todayString);
-    console.log(`${id} should always match ${todayObjIndex}`);
-    const oldSpots = todayObject.spots;
+  const updateSpots = (newState) => {
+    const todayString = newState.day;
+    const todayObject = newState.days.find( d => d.name === todayString);
+    const todayObjIndex = newState.days.findIndex( d => d.name === todayString);
     const todayAppIds = todayObject.appointments;
 
-    // console.log('Today app ids:', todayAppIds);
-    // console.log('State.appointments:',state.appointments);
-
-    const newSpots = adding ? oldSpots-1 : oldSpots+1;
-
-
-    /*
-    // This would work if state wasn't stale, but since state.appointments hasn't been updated
-    // and contains an incorrect number of null values I had to try something else.
+    
     let freeSpots = 0;
     for (const appId of todayAppIds) {
-      if (state.appointments[appId].interview === null) {
-        // console.log('Adding a free spot because the interview was null for appointment id:',appId)
+      if (newState.appointments[appId].interview === null) {
         freeSpots += 1;
       }
     }
-    console.log(freeSpots, "is what freeSpots was after the loop");
 
-    */
-
-    const newTodayObject = {...todayObject, spots: newSpots}; // I think this is going to break eventually, because it's creating a stale object.
-    const newDays = [...state.days];
+    const newTodayObject = {...todayObject, spots: freeSpots};
+    const newDays = [...newState.days];
     newDays[todayObjIndex] = newTodayObject;
 
-    setState(prev => ({...prev, days: newDays}));
+    setState({...newState, days: newDays});
 
-    // console.log('Today has this many spots now: ',freeSpots);
-
-    
   }
 
-  return {state, setState, setDay, bookInterview, cancelInterview, updateSpots}
+
+  return {state, setState, setDay, bookInterview, cancelInterview}
 }
 
 
