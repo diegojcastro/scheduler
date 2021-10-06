@@ -1,5 +1,9 @@
 import React from 'react';
 
+/* Displays a registered interview with student name, interviewer name.
+ * On hover, displays a button to edit the appointment and one to delete.
+ * Takes student, interviewer, onEdit, onDelete as props.
+ */ 
 function Show(props) {
   return (
     <main className="appointment__card appointment__card--show">

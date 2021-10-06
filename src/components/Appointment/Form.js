@@ -3,9 +3,15 @@ import React, {useState} from 'react';
 import InterviewerList from 'components/InterviewerList';
 import Button from 'components/Button';
 
+/* Used to create or edit appointments. Populates interviewer and student
+ * name fields automatically on edit mode, or defaults to null/empty string
+ * on create mode.
+ * Takes name, value, interviewers, onSave, onCancel as props
+ */
 function Form(props) {
   const [name, setName] = useState(props.name || "")
   const [interviewer, setInterviewer] = useState(props.value || null)
+  const [error, setError] = useState("");
 
   const reset = () => {
     setName("")
@@ -23,7 +29,17 @@ function Form(props) {
   }
 
   const handleSave = (event) => {
-    props.onSave(name, interviewer)
+
+    validate()
+  }
+
+  function validate() {
+    if (name === "") {
+      setError("Student name cannot be blank");
+      return;
+    }
+    setError("");
+    props.onSave(name, interviewer);
   }
 
 
@@ -38,11 +54,13 @@ function Form(props) {
             value={name}
             type="text"
             placeholder="Enter Student Name"
+            data-testid="student-name-input"
             /*
               This must be a controlled component
             */
           />
         </form>
+        <section className="appointment__validation">{error}</section>
         <InterviewerList interviewers={props.interviewers} value={interviewer} onChange={setInterviewer} />
       </section>
       <section className="appointment__card-right">

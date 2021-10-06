@@ -14,7 +14,10 @@ import useVisualMode from "hooks/useVisualMode";
 import 'components/Appointment/styles.scss';
 
 
-
+/* Incorporates every subcomponent of Appointments as different modes.
+ * Switches to each corresponding mode depending on the appointment state.
+ * Takes id, interview, interviewer, time, bookInterview, cancelInterview as props.
+ */
 function Appointment(props) {
   const EMPTY = "EMPTY";
   const SHOW = "SHOW";
@@ -28,12 +31,14 @@ function Appointment(props) {
 
   const {mode, transition, back} = useVisualMode( props.interview ? SHOW : EMPTY);
 
+  // Called when Save is clicked from FORM component.
+  // Attempts to bookInterview, and transitions to SHOW or ERROR depending on success.
   function save(name, interviewer) {
     const interview = {
       student: name,
       interviewer
     };
-    transition(SAVING); // Flagging this true changes nothing?
+    transition(SAVING); 
     props.bookInterview(props.id, interview)
       .then(() => transition(SHOW))
       .catch((e) => {
@@ -41,12 +46,15 @@ function Appointment(props) {
       });
   };
 
+  // Called when trash can icon is clicked from SHOW component.
   function confirmDeletion() {
     transition(CONFIRM);
   };
 
+  // Called after delete confirmation is clicked from CONFIRM component.
+  // Attempts to deleteInterview, and transitions to EMPTY or ERROR depending on success.
   function deleteInterview() {
-    transition(DELETING, true); // For some reason flagging this true doesn't change anything.
+    transition(DELETING, true);
     props.cancelInterview(props.id)
       .then(() => transition(EMPTY))
       .catch((e) => {
@@ -54,6 +62,7 @@ function Appointment(props) {
       });
   };
   
+  // When edit icon is clicked from SHOW component, transitions to FORM component in Edit mode.
   function editInterview() {
     transition(EDIT);
   };

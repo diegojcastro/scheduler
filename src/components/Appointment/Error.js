@@ -1,5 +1,9 @@
 import React from 'react';
 
+/* Displays an Error message when a Save or Delete request to server
+ * times out or fails for another reason.
+ * Takes onClose and message as props.
+ */
 function Error(props) {
   return(
     <main className="appointment__card appointment__card--error">

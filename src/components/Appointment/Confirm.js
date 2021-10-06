@@ -2,6 +2,10 @@ import React from 'react';
 
 import Button from 'components/Button';
 
+/* Shows a warning that requires the user to Cancel/Confirm before
+ * completing a deletion.
+ * takes message, onCancel, onConfirm as props
+ */
 function Confirm(props) {
   return(
     <main className="appointment__card appointment__card--confirm">

@@ -1,5 +1,8 @@
 import React from 'react'
 
+/* Temporary display while an asynchronous call to DB is executing.
+ * Takes message as a prop.
+ */
 function Status(props) {
   return(
     <main className="appointment__card appointment__card--status">
