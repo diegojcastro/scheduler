@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from 'axios';
 
 export default function useApplicationData() {
@@ -6,8 +6,6 @@ export default function useApplicationData() {
   const [state, setState] = useState({
     day: "Monday",
     days: [],
-    // you may put the line below, but will have to remove/comment hardcoded appointments variable
-    //appointments: {}
     interviewers: null
   });
 
@@ -57,11 +55,9 @@ export default function useApplicationData() {
       axios.get('/api/appointments'),
       axios.get('/api/interviewers')
     ]).then((all) => {
-      // console.log(all); 
       const days = [...all[0].data];
       const appointments = {...all[1].data};
       const interviewers = {...all[2].data};
-      // console.log(interviewers)
       setState( prev => ({...prev, days, appointments, interviewers }));
     })
   }, [])
@@ -93,5 +89,3 @@ export default function useApplicationData() {
   return {state, setState, setDay, bookInterview, cancelInterview}
 }
 
-
-// export default {state, setState, setDay, bookInterview, cancelInterview};
