@@ -7,15 +7,15 @@ Create a new interview by clicking the "+" icon.
 Enter the student name and select an interviewer.
 Save your selection to add it to the database.
 
-!["GIF of creating a new appointment"](url)
+!["GIF of creating a new appointment"](https://github.com/diegojcastro/scheduler/blob/master/docs/add-appointment.gif?raw=true)
 
 Edit to update existing interviews.
 
-!["GIF of editing an appointment"](url)
+!["GIF of editing an appointment"](https://github.com/diegojcastro/scheduler/blob/master/docs/edit-appointment.gif?raw=true)
 
 Delete a scheduled interview. Update the number of available interview slots per day automatically.
 
-!["GIF of deleting an appointment"](url)
+!["GIF of deleting an appointment"](https://github.com/diegojcastro/scheduler/blob/master/docs/delete-appointment.gif?raw=true)
 
 
 ## Setup
