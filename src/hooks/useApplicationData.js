@@ -20,33 +20,28 @@ export default function useApplicationData() {
       ...state.appointments,
       [id]: appointment
     };
-    const newState = {
-      ...state,
-      appointments
-    };
 
     return axios.put(`/api/appointments/${id}`, { ...appointment })
-      .then(() => updateSpots(newState))
+      .then(() => {
+        const days = updateSpots(state, appointments)
+        setState({...state, days, appointments})
+      })
   };
 
   function cancelInterview(id) {
-    const appointment = {
-      ...state.appointments[id]
-    }
-    appointment.interview = null;
+    const appointment = {...state.appointments[id], interview: null}
 
     const appointments = {
       ...state.appointments,
       [id]: appointment
     };
 
-    const newState = {
-      ...state,
-      appointments
-    }
 
     return axios.delete(`/api/appointments/${id}`)
-      .then(() => updateSpots(newState))
+      .then(() => {
+        const days = updateSpots(state, appointments)
+        setState({...state, days, appointments})
+      })
   }
 
   useEffect(() => {
@@ -63,25 +58,25 @@ export default function useApplicationData() {
   }, [])
 
 
-  const updateSpots = (newState) => {
-    const todayString = newState.day;
-    const todayObject = newState.days.find( d => d.name === todayString);
-    const todayObjIndex = newState.days.findIndex( d => d.name === todayString);
+  const updateSpots = (state, appointments) => {
+    const todayString = state.day;
+    const todayObject = state.days.find( d => d.name === todayString);
+    const todayObjIndex = state.days.findIndex( d => d.name === todayString);
     const todayAppIds = todayObject.appointments;
 
     
     let freeSpots = 0;
     for (const appId of todayAppIds) {
-      if (newState.appointments[appId].interview === null) {
+      if (appointments[appId].interview === null) {
         freeSpots += 1;
       }
     }
 
     const newTodayObject = {...todayObject, spots: freeSpots};
-    const newDays = [...newState.days];
+    const newDays = [...state.days];
     newDays[todayObjIndex] = newTodayObject;
 
-    setState({...newState, days: newDays});
+    return newDays;
 
   }
 
